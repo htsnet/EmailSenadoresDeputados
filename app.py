@@ -21,10 +21,10 @@ st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 def main():
     with st.sidebar:
         st.header('Informações sobre o uso')
-        st.write('1 - Informe seu servidor SMTP, conta e senha. ')
-        st.write('2 - Escreva seu texto (respeitosamente) para ser encaminhado a cada representante.')
+        st.write('1 - Escreva o título e seu texto (respeitosamente) para ser encaminhado a cada representante.')
+        st.write('2 - Informe seu servidor SMTP, conta e senha. ')
         st.write('3 - Confira atentamente o texto antes de prosseguir.')
-        st.write('4 - Escolha o grupo de destinatários da sua mensagem.')
+        st.write('4 - Escolha o grupo de destinatários da sua mensagem. Assim que for escolhido o grupo, é iniciado o envio.')
         st.write('5 - Há um intervalo proposital de 2 segundos entre cada disparo.')
             
         st.header('Sobre')
@@ -32,7 +32,7 @@ def main():
         st.write('A lista de emails foi obtida na data de 01/03/2023 através do site https://www.vemprarua.net/.')
         st.write('Nem todos os representantes do povo fornecem seu endereço de e-mail para contato direto.')
         st.write('A responsabilidade pelo conteúdo da mensagem é exclusivamente sua.')
-        st.write('Automaticamente será inserido no início de cada texto a frase: "Prezado Deputado Federal" ou "Prezado Senado".')
+        st.write('Automaticamente será inserido no início de cada texto a frase: "Prezado(a) Deputado(a) Federal" ou "Prezado(a) Senador(a)".')
         st.write('Nenhuma informação é armazenada no servidor. A cada uso você precisará informar novamente os dados de sua conta.')
         st.write('Os detalhes e o código fonte sobre este projeto podem ser encontrados em https://github.com/htsnet/EmailSenadoresDeputados')
         
@@ -54,30 +54,20 @@ def main():
     st.title(Title)
     st.subheader('Uma forma de se comunicar com os deputados federais e senadores de forma rápida')
 
-    # with st.form('Meu formulário'):
-    #     smtp_server = st.text("Seu servidor smtp", 
-    #                     value="smtp.gmail.com", key='fieldText', max_chars=50)
-    #     smtp_username = st.text("Seu endereço de email", 
-    #                     value="@gmail.com", key='fieldText', max_chars=50)
-    #     smtp_passowrd = st.text("Sua senha da caixa postal", key='password', max_chars=50)        
-    #     title = st.text("Escreva o título da mensagem aqui", key='fieldText', max_chars=150)
-    #     text = st.text_area("Escreva seu texto aqui", key='fieldText', max_chars=2000, height=100)
-    #     botSummary = st.form_submit_button("Executar o envio")   
-
     # Cria campos de entrada para o título, texto, servidor SMTP, nome de usuário e senha
-    subject = st.text_input('Título do e-mail')
-    body = st.text_area('Texto do e-mail')
-    smtp_server = st.text_input('Servidor SMTP')
-    username = st.text_input('Nome de usuário do Gmail')
-    password = st.text_input('Senha do Gmail', type='password')
+    subject = st.text_input('Título do e-mail').strip()
+    body = st.text_area('Texto do e-mail').strip()
+    smtp_server = st.text_input('Servidor SMTP').strip()
+    username = st.text_input('Nome de usuário do Gmail').strip()
+    password = st.text_input('Senha do Gmail', type='password').strip()
     
     destinatarios = None
     if st.button('Enviar para deputados federais'):
         destinatarios = deputados_federais
-        saudacao = 'Prezado Deputado Federal'
+        saudacao = 'Prezado(a) Deputado(a) Federal'
     elif st.button('Enviar para senadores'):
         destinatarios = senadores
-        saudacao = 'Prezado Senador'
+        saudacao = 'Prezado(a) Senador(a)'
 
     # Envia os e-mails personalizados para o grupo selecionado de destinatários
     if destinatarios is not None:
