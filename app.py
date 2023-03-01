@@ -25,7 +25,7 @@ def main():
         st.write('2 - Escreva seu texto (respeitosamente) para ser encaminhado a cada representante.')
         st.write('3 - Confira atentamente o texto antes de prosseguir.')
         st.write('4 - Escolha o grupo de destinatários da sua mensagem.')
-        st.write('5 - Há um intervalo proposital de 5 segundos entre cada disparo.')
+        st.write('5 - Há um intervalo proposital de 2 segundos entre cada disparo.')
             
         st.header('Sobre')
         st.write('‼️ ⚠️ Projeto em versão preliminar.')
@@ -119,6 +119,7 @@ def main():
 
                 # Atualiza a barra de progresso
                 progress = (i + 1) / len(destinatarios)
+                time.sleep(2)
                 progress_bar.progress(int(progress * 100))
 
             # Fecha a conexão com o servidor SMTP

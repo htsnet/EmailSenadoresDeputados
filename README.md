@@ -2,7 +2,7 @@ Projeto: Um script para enviar uma mensagem de email a cada deputado federal ou 
 Autor: Hamilton Tenório da Silva  
 Date: 01/03/2023  
 
-Veja es projeto em funcionamento em 
+Veja es projeto em funcionamento em https://htsnet-emailsenadoresdeputados-app-p959uw.streamlit.app/
 
 ------ Instructions ------
 python -m pip install pip // para instalar o PIP 
