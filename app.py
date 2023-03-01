@@ -1,5 +1,5 @@
 import streamlit as st
-from time import sleep
+import time
 import smtplib
 from email.mime.text import MIMEText
 
