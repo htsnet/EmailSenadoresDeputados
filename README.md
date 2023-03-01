@@ -4,6 +4,8 @@ Date: 01/03/2023
 
 Veja es projeto em funcionamento em https://htsnet-emailsenadoresdeputados-app-p959uw.streamlit.app/  
 
+Projeto criado em Python, como uso do Streamlit e praticamente todo o script foi gerado por comandos progressivos junto ao chatGPT.  
+
 ![Alt text](tela_preenchida.png)
 
 ------ Instructions ------
