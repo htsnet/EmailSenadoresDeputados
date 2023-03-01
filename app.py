@@ -29,11 +29,12 @@ def main():
             
         st.header('Sobre')
         st.write('‼️ ⚠️ Projeto em versão preliminar.')
-        st.write('A lista de emails foi obtida na data de 01/03/2023 através do site ')
+        st.write('A lista de emails foi obtida na data de 01/03/2023 através do site https://www.vemprarua.net/.')
+        st.write('Nem todos os representantes do povo fornecem seu endereço de e-mail para contato direto.')
         st.write('A responsabilidade pelo conteúdo da mensagem é exclusivamente sua.')
         st.write('Automaticamente será inserido no início de cada texto a frase: "Prezado Deputado Federal" ou "Prezado Senado".')
         st.write('Nenhuma informação é armazenada no servidor. A cada uso você precisará informar novamente os dados de sua conta.')
-        st.write('Os detalhes e o código fonte sobre este projeto podem ser encontrados em ')
+        st.write('Os detalhes e o código fonte sobre este projeto podem ser encontrados em https://github.com/htsnet/EmailSenadoresDeputados')
         
         st.header('Detalhe técnico')
         st.write('Se você usa um serviço de email com autenticação em 2 etapas será preciso gerar uma senha exclusiva para este disparo. Para o Gmail, siga este link: https://myaccount.google.com/apppasswords')
@@ -106,7 +107,10 @@ def main():
             # Envia um e-mail personalizado para cada destinatário
             for i, to_email in enumerate(destinatarios):
                 if len(to_email) > 0:
-                    message = MIMEText(f'To: {to_email}\nSubject: {subject}\n\n{saudacao},\n\n{body}')
+                    message = MIMEText(f'{saudacao},\n\n{body}')
+                    message['Subject'] = subject
+                    message['To'] = to_email
+                    message['From'] = username
                     try:
                         server.sendmail(username, to_email, message.as_string())
                         st.success(f'E-mail enviado para {to_email}')
