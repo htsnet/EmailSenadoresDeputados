@@ -24,8 +24,10 @@ def main():
         st.write('1 - Escreva o título e seu texto (respeitosamente) para ser encaminhado a cada representante.')
         st.write('2 - Informe seu servidor SMTP, conta e senha. ')
         st.write('3 - Confira atentamente o texto antes de prosseguir.')
-        st.write('4 - Escolha o grupo de destinatários da sua mensagem. Assim que for escolhido o grupo, é iniciado o envio.')
+        st.write('4 - Escolha o grupo de destinatários da sua mensagem. O envio se inicia automaticamente.')
         st.write('5 - Há um intervalo proposital de 2 segundos entre cada disparo.')
+        st.write('6 - Aguarde o processamento de todos os registros. Não feche o navegador.')
+        st.write('7 - Após o término do envio para todos os destinatários, desejando efetuar novo envio, clique no botão "Preparar novo envio".')
             
         st.header('Sobre')
         st.write('‼️ ⚠️ Projeto em versão preliminar.')
@@ -34,10 +36,15 @@ def main():
         st.write('A responsabilidade pelo conteúdo da mensagem é exclusivamente sua.')
         st.write('Automaticamente será inserido no início de cada texto a frase: "Prezado(a) Deputado(a) Federal" ou "Prezado(a) Senador(a)".')
         st.write('Nenhuma informação é armazenada no servidor. A cada uso você precisará informar novamente os dados de sua conta.')
-        st.write('Os detalhes e o código fonte sobre este projeto podem ser encontrados em https://github.com/htsnet/EmailSenadoresDeputados')
         
-        st.header('Detalhe técnico')
+        
+        st.header('Detalhes técnicos')
         st.write('Se você usa um serviço de email com autenticação em 2 etapas será preciso gerar uma senha exclusiva para este disparo. Para o Gmail, siga este link: https://myaccount.google.com/apppasswords')
+        st.write('O contato com o servidor SMTP é pela porta 587.')
+        st.write('Os detalhes e o código fonte sobre este projeto podem ser encontrados em https://github.com/htsnet/EmailSenadoresDeputados')
+        st.write('Para contato, sugestões ou críticas, faça contato através do meu Linkedin: https://www.linkedin.com/in/hamiltontenoriodasilva/')
+        st.header('')
+                 
     
     # lista obtida nas páginas https://www.vemprarua.net/camara/br/# e https://www.vemprarua.net/senado/br/, na opção de exportar a lista de emaisl com separadores por vírgula
     # basta copiar todo o conteúdo e colar na variável respectiva
@@ -55,9 +62,9 @@ def main():
     st.subheader('Uma forma de se comunicar com os deputados federais e senadores de forma rápida')
 
     # Cria campos de entrada para o título, texto, servidor SMTP, nome de usuário e senha
-    subject = st.text_input('Título do e-mail').strip()
-    body = st.text_area('Texto do e-mail').strip()
-    smtp_server = st.text_input('Servidor SMTP').strip()
+    subject = st.text_input('Título do e-mail', placeholder='Algo que seja pertinente ao texto').strip()
+    body = st.text_area('Texto do e-mail', placeholder='Seja o mais claro possível e assine ao final').strip()
+    smtp_server = st.text_input('Servidor SMTP', placeholder='por ex. smtp.gmail.com').strip()
     username = st.text_input('Nome de usuário do Gmail').strip()
     password = st.text_input('Senha do Gmail', type='password').strip()
     
@@ -82,38 +89,54 @@ def main():
         elif password.strip() == '':
             st.error('Por favor, digite a senha do Gmail.')
         else:
-            # Conecta ao servidor SMTP
+            # Exibe o botão "Enviar" caso todos os campos obrigatórios estejam preenchidos
+            # if st.button('Iniciar envio'):
+                # Exibe mensagem de spinner enquanto os e-mails são enviados
+                # with st.spinner('Enviando e-mails...'):
+                # Conecta ao servidor SMTP
             try:
                 server = smtplib.SMTP(smtp_server, 587)
                 server.starttls()
                 server.login(username, password)
+                conexaoOk = True
             except Exception as e:
                 st.error(f'Erro ao conectar ao seu servidor SMTP: {str(e)}')
-                quit()
+                # remove da tela a barra de progresso
+                # coloca botão para possibilitar recarregar a página
+                botRestart = st.button("Tentar novamente")
+                if botRestart:
+                    st.experimental_rerun()
+                conexaoOk = False
 
-            # Define a barra de progresso
-            progress_bar = st.progress(0)
+            if conexaoOk:
+                # Define a barra de progresso
+                progress_bar = st.progress(0)
 
-            # Envia um e-mail personalizado para cada destinatário
-            for i, to_email in enumerate(destinatarios):
-                if len(to_email) > 0:
-                    message = MIMEText(f'{saudacao},\n\n{body}')
-                    message['Subject'] = subject
-                    message['To'] = to_email
-                    message['From'] = username
-                    try:
-                        server.sendmail(username, to_email, message.as_string())
-                        st.success(f'E-mail enviado para {to_email}')
-                    except Exception as e:
-                        st.error(f'Erro ao enviar e-mail para {to_email}: {str(e)}')
+                # Envia um e-mail personalizado para cada destinatário
+                for i, to_email in enumerate(destinatarios):
+                    if len(to_email) > 0:
+                        message = MIMEText(f'{saudacao},\n\n{body}')
+                        message['Subject'] = subject
+                        message['To'] = to_email
+                        message['From'] = username
+                        try:
+                            # server.sendmail(username, to_email, message.as_string())
+                            st.success(f'E-mail enviado para {to_email}')
+                        except Exception as e:
+                            st.error(f'Erro ao enviar e-mail para {to_email}: {str(e)}')
 
-                # Atualiza a barra de progresso
-                progress = (i + 1) / len(destinatarios)
-                time.sleep(2)
-                progress_bar.progress(int(progress * 100))
+                    # Atualiza a barra de progresso
+                    progress = (i + 1) / len(destinatarios)
+                    time.sleep(2)
+                    progress_bar.progress(int(progress * 100))
 
-            # Fecha a conexão com o servidor SMTP
-            server.quit()
-                    
+                # Fecha a conexão com o servidor SMTP
+                server.quit()
+                
+                # coloca botão para possibilitar recarregar a página
+                botRestartFinal = st.button("Preparar novo envio")
+                if botRestartFinal:
+                    st.experimental_rerun()
+                
 if __name__ == '__main__':
 	main()                     
