@@ -120,7 +120,7 @@ def main():
                         message['To'] = to_email
                         message['From'] = username
                         try:
-                            # server.sendmail(username, to_email, message.as_string())
+                            server.sendmail(username, to_email, message.as_string())
                             st.success(f'E-mail enviado para {to_email}')
                         except Exception as e:
                             st.error(f'Erro ao enviar e-mail para {to_email}: {str(e)}')
